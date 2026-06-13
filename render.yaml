@@ -1,0 +1,47 @@
+services:
+  - type: web
+    name: stroypotok-api
+    runtime: node
+    plan: free
+    region: frankfurt
+    rootDir: api
+    buildCommand: npm ci --include=dev && npm run prisma:generate && npm run build && npx prisma migrate deploy && npm run seed:demo
+    startCommand: npm run start
+    healthCheckPath: /health
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: 22.14.0
+      - key: NODE_ENV
+        value: production
+      - key: AUTH_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: stroypotok-db
+          property: connectionString
+
+  - type: web
+    name: stroypotok-web
+    runtime: node
+    plan: free
+    region: frankfurt
+    rootDir: web
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm run start -- -H 0.0.0.0 -p $PORT
+    healthCheckPath: /
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: 22.14.0
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_API_URL
+        value: https://stroypotok-api.onrender.com
+
+databases:
+  - name: stroypotok-db
+    plan: free
+    region: frankfurt
+    databaseName: stroypotok
+    user: stroypotok_user

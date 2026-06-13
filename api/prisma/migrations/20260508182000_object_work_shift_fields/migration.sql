@@ -1,0 +1,2 @@
+ALTER TABLE "Shift" ADD COLUMN "shiftHours" DECIMAL(5,2) NOT NULL DEFAULT 8.00;
+ALTER TABLE "Shift" ADD COLUMN "estimatedShiftCount" INTEGER;
