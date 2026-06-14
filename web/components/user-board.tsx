@@ -53,7 +53,6 @@ export function UserBoard({ initialUsers, token }: Props) {
           <div className="sectionHead" style={{ marginTop: 0 }}>
             <div>
               <h3>Команда</h3>
-              <p>Отсюда вырастут роли, авторизация и последующая запись на смены.</p>
             </div>
             <span className="status">{users.length} всего</span>
           </div>
@@ -62,7 +61,7 @@ export function UserBoard({ initialUsers, token }: Props) {
             {users.length === 0 ? (
               <div className="item">
                 <h4>Пока нет пользователей</h4>
-                <div className="meta">Добавьте первого менеджера или рабочего слева.</div>
+                <div className="meta">Пользователей пока нет.</div>
               </div>
             ) : (
               users.map((user) => (

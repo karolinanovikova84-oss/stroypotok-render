@@ -62,7 +62,6 @@ export function ShiftForm({ token, projects, onCreated }: Props) {
   return (
     <div className="formCard">
       <h3>Новая смена</h3>
-      <p className="meta">Смены уже привязаны к объекту и готовы для будущей записи рабочих.</p>
 
       <form className="stack" onSubmit={handleSubmit}>
         <div className="field">

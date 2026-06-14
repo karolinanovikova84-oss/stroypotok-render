@@ -26,7 +26,6 @@ export function ShiftBoard({ initialShifts, projects, token }: Props) {
         <div className="sectionHead" style={{ marginTop: 0 }}>
           <div>
             <h3>Активные смены</h3>
-            <p>Это уже похоже на ядро будущей системы для рабочих и менеджеров.</p>
           </div>
           <span className="status">{shifts.length} всего</span>
         </div>
@@ -35,7 +34,7 @@ export function ShiftBoard({ initialShifts, projects, token }: Props) {
           {shifts.length === 0 ? (
             <div className="item">
               <h4>Пока нет смен</h4>
-              <div className="meta">Создайте объект, затем первую смену слева.</div>
+              <div className="meta">Смен пока нет.</div>
             </div>
           ) : (
             shifts.map((shift) => (

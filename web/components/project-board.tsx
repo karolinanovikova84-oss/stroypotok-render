@@ -21,7 +21,6 @@ export function ProjectBoard({ initialProjects, token }: Props) {
         <div className="sectionHead" style={{ marginTop: 0 }}>
           <div>
             <h3>Объекты в работе</h3>
-            <p>Здесь менеджер видит базу объектов и количество связанных смен.</p>
           </div>
           <span className="status">{projects.length} всего</span>
         </div>
@@ -30,7 +29,7 @@ export function ProjectBoard({ initialProjects, token }: Props) {
           {projects.length === 0 ? (
             <div className="item">
               <h4>Пока пусто</h4>
-              <div className="meta">Создайте первый объект слева, и он сразу появится здесь.</div>
+              <div className="meta">Объектов пока нет.</div>
             </div>
           ) : (
             projects.map((project) => (

@@ -50,9 +50,6 @@ export function AuthForm() {
     <div className="authShell">
       <span className="eyebrow">Вход в систему</span>
       <h1>{mode === "login" ? "Открыть кабинет" : "Создать доступ"}</h1>
-      <p className="meta">
-        После входа система покажет только тот рабочий стол, который соответствует вашей роли.
-      </p>
 
       <div className="segmented">
         <button

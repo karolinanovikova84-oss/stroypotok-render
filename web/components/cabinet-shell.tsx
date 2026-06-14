@@ -772,7 +772,6 @@ export function CabinetShell() {
         <section id="demo-time" className="timePanel">
           <div>
             <span className="eyebrow">Демо-время</span>
-            <p className="meta">Перемотка времени нужна, чтобы показать начисление зарплаты и блокировку записи после старта объекта.</p>
             <p className="meta">
               Активное время системы: <b>{demoNow ? formatDate(demoNow) : "реальное текущее время"}</b>
             </p>
@@ -847,7 +846,6 @@ export function CabinetShell() {
         <section id="manager-absences" className="split">
           <div className="tableCard">
             <h3>Больничные, отпуска и замены</h3>
-            <p className="meta">Рабочий отправляет запрос по объекту, прораб подтверждает отсутствие и при необходимости публикует смену на замену.</p>
             <div className="list">
               {managerAbsences.map((absence) => (
                 <div className="item" key={absence.id}>
@@ -919,7 +917,6 @@ export function CabinetShell() {
 
           <div id="manager-payroll" className="tableCard">
             <h3>Зарплата и начисления</h3>
-            <p className="meta">Сумма начисляется по демо-времени: для обычной работы учитываются прошедшие рабочие дни по графику, для повышенных смен - завершенная смена.</p>
             <div className="list">
               {payrollRows.map((row) => {
                 const deductionForm = deductionForms[row.id] || {
@@ -945,7 +942,7 @@ export function CabinetShell() {
                   </div>
                   <div className="managerTools">
                     <h4>Ручной вычет за невыход</h4>
-                    <p className="meta">Больничные и отпуска остаются оплачиваемыми. Этот блок нужен для ручного вычета, если рабочий не вышел на смену без оплачиваемого основания.</p>
+                    <p className="meta">Для невыходов без подтверждения.</p>
                     <div className="formGrid">
                       <div className="field">
                         <label htmlFor={`deduction-start-${row.id}`}>Начало периода</label>
@@ -1150,7 +1147,6 @@ export function CabinetShell() {
         <section id="requests" className="split">
           <div className="formCard">
             <h3>Заявка клиента</h3>
-            <p className="meta">Клиент описывает объект, сроки, бюджет и состав работ.</p>
             <form className="stack" onSubmit={submitRequest}>
               <div className="field">
                 <label htmlFor="request-title">Название</label>
@@ -1286,7 +1282,6 @@ export function CabinetShell() {
           <div className="sectionHead">
             <div>
               <h2>Кабинет координатора</h2>
-              <p>Основной сценарий ведет заявку до старта работ, а временная вкладка очистки помогает быстро пересобрать демо с нуля.</p>
             </div>
           </div>
           <div className="tabBar">
@@ -1309,7 +1304,6 @@ export function CabinetShell() {
               <div className="sectionHead">
                 <div>
                   <h2>Диспетчеризация заявок</h2>
-                  <p>Координатор принимает заявку, назначает прораба и запускает объект в работу.</p>
                 </div>
               </div>
               <div className="list">
@@ -1381,7 +1375,6 @@ export function CabinetShell() {
               <div className="sectionHead">
                 <div>
                   <h2>Планы от прорабов</h2>
-                  <p>Координатор проверяет команду, сроки и ресурсы, затем дает старт работам.</p>
                 </div>
               </div>
 
@@ -1435,7 +1428,6 @@ export function CabinetShell() {
               <div className="sectionHead">
                 <div>
                   <h2>Очистка данных</h2>
-                  <p>Временный инструмент для подготовки защиты: можно удалить тестовые заявки, объекты и смены перед созданием сценария с нуля.</p>
                 </div>
               </div>
               <div className="split">
@@ -1559,7 +1551,7 @@ export function CabinetShell() {
         <section id="manager-shifts" className="split">
           <div className="formCard">
             <h3>Работа на объекте</h3>
-            <p className="meta">Обычный вариант означает запись рабочего на весь объект. Отдельные смены создаются только для выходных или праздников.</p>
+            <p className="meta">Отдельные смены: выходные и праздники.</p>
             <form className="stack" onSubmit={submitShift}>
               <div className="field">
                 <label htmlFor="shift-project">Объект</label>
@@ -2219,7 +2211,6 @@ export function CabinetShell() {
         <section id="worker-absences" className="split">
           <div className="formCard">
             <h3>Запросить больничный или отпуск</h3>
-            <p className="meta">Запрос уходит прорабу выбранного объекта. После согласования он сможет создать смену на замену.</p>
             <form className="stack" onSubmit={submitAbsence}>
               <div className="field">
                 <label htmlFor="absence-assignment">Объект</label>
