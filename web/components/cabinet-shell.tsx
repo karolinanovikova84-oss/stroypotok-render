@@ -705,6 +705,27 @@ export function CabinetShell() {
   const isManager = user.role === "MANAGER";
   const isWorker = user.role === "WORKER";
   const isClient = user.role === "CLIENT";
+  const quickLinks = [
+    { href: "#overview", label: "Обзор" },
+    ...((isAdmin || isCoordinator || isManager) ? [{ href: "#demo-time", label: "Демо-время" }] : []),
+    ...((isClient || isAdmin) ? [{ href: "#requests", label: isClient ? "Мои заявки" : "Заявки" }] : []),
+    ...((isAdmin || isCoordinator) ? [{ href: "#coordinator", label: "Координатор" }] : []),
+    ...((isAdmin || isManager)
+      ? [
+          { href: "#manager-shifts", label: "Смены" },
+          { href: "#manager-payroll", label: "Начисления" },
+          { href: "#manager-absences", label: "Отсутствия" }
+        ]
+      : []),
+    ...(isWorker
+      ? [
+          { href: "#worker-work", label: "Работа" },
+          { href: "#worker-schedule", label: "Мои смены" },
+          { href: "#worker-absences", label: "Отсутствия" }
+        ]
+      : []),
+    ...(isAdmin ? [{ href: "#users", label: "Пользователи" }] : [])
+  ];
 
   return (
     <>
@@ -721,10 +742,18 @@ export function CabinetShell() {
         </button>
       </section>
 
+      <nav className="quickNav" aria-label="Быстрая навигация по кабинету">
+        {quickLinks.map((link) => (
+          <a key={link.href} href={link.href}>
+            {link.label}
+          </a>
+        ))}
+      </nav>
+
       {message ? <div className="message message--ok">{message}</div> : null}
       {error ? <div className="message message--error">{error}</div> : null}
 
-      <section className="dashboardStrip">
+      <section id="overview" className="dashboardStrip">
         <div className="metricCard">
           <span>Заявки</span>
           <b>{requests.length}</b>
@@ -740,7 +769,7 @@ export function CabinetShell() {
       </section>
 
       {(isAdmin || isCoordinator || isManager) ? (
-        <section className="timePanel">
+        <section id="demo-time" className="timePanel">
           <div>
             <span className="eyebrow">Демо-время</span>
             <p className="meta">Перемотка времени нужна, чтобы показать начисление зарплаты и блокировку записи после старта объекта.</p>
@@ -815,7 +844,7 @@ export function CabinetShell() {
       ) : null}
 
       {(isAdmin || isManager) ? (
-        <section className="split">
+        <section id="manager-absences" className="split">
           <div className="tableCard">
             <h3>Больничные, отпуска и замены</h3>
             <p className="meta">Рабочий отправляет запрос по объекту, прораб подтверждает отсутствие и при необходимости публикует смену на замену.</p>
@@ -888,7 +917,7 @@ export function CabinetShell() {
             </div>
           </div>
 
-          <div className="tableCard">
+          <div id="manager-payroll" className="tableCard">
             <h3>Зарплата и начисления</h3>
             <p className="meta">Сумма начисляется по демо-времени: для обычной работы учитываются прошедшие рабочие дни по графику, для повышенных смен - завершенная смена.</p>
             <div className="list">
@@ -1118,7 +1147,7 @@ export function CabinetShell() {
       ) : null}
 
       {(isClient || isAdmin) ? (
-        <section className="split">
+        <section id="requests" className="split">
           <div className="formCard">
             <h3>Заявка клиента</h3>
             <p className="meta">Клиент описывает объект, сроки, бюджет и состав работ.</p>
@@ -1253,7 +1282,7 @@ export function CabinetShell() {
       ) : null}
 
       {(isAdmin || isCoordinator) ? (
-        <section className="workspaceSection">
+        <section id="coordinator" className="workspaceSection">
           <div className="sectionHead">
             <div>
               <h2>Кабинет координатора</h2>
@@ -1527,7 +1556,7 @@ export function CabinetShell() {
       ) : null}
 
       {(isAdmin || isManager) ? (
-        <section className="split">
+        <section id="manager-shifts" className="split">
           <div className="formCard">
             <h3>Работа на объекте</h3>
             <p className="meta">Обычный вариант означает запись рабочего на весь объект. Отдельные смены создаются только для выходных или праздников.</p>
@@ -2082,7 +2111,7 @@ export function CabinetShell() {
       ) : null}
 
       {isWorker ? (
-        <section className="split">
+        <section id="worker-work" className="split">
           <div className="tableCard">
             <h3>Доступная работа</h3>
             <div className="list">
@@ -2137,7 +2166,7 @@ export function CabinetShell() {
             </div>
           </div>
 
-          <div className="tableCard">
+          <div id="worker-schedule" className="tableCard">
             <h3>Мои назначения</h3>
             <div className="list">
               {(user.assignments || []).map((assignment) => {
@@ -2187,7 +2216,7 @@ export function CabinetShell() {
       ) : null}
 
       {isWorker ? (
-        <section className="split">
+        <section id="worker-absences" className="split">
           <div className="formCard">
             <h3>Запросить больничный или отпуск</h3>
             <p className="meta">Запрос уходит прорабу выбранного объекта. После согласования он сможет создать смену на замену.</p>
@@ -2280,7 +2309,7 @@ export function CabinetShell() {
       ) : null}
 
       {isAdmin ? (
-        <section className="split">
+        <section id="users" className="split">
           <div className="formCard">
             <h3>Админ-панель пользователей</h3>
             <form className="stack" onSubmit={submitUser}>

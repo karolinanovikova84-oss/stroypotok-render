@@ -619,7 +619,8 @@ select {
 }
 
 .button--secondary {
-  background: transparent;
+  color: var(--text-main);
+  background: var(--input-bg);
   border: 1px solid var(--border-light);
 }
 
@@ -836,6 +837,55 @@ select {
   font-size: clamp(1rem, 2vw, 1.2rem);
 }
 
+.workspaceHero > div,
+.sectionHead > div {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.quickNav {
+  display: flex;
+  gap: 8px;
+  margin: -10px 0 24px;
+  padding: 0 2px 8px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) transparent;
+}
+
+.quickNav a {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-muted);
+  background: var(--bg-soft);
+  font-family: var(--font-heading), sans-serif;
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.quickNav a:hover {
+  color: var(--text-main);
+  border-color: var(--accent);
+  background: var(--status-bg);
+}
+
+.dashboardStrip,
+.split,
+.timePanel,
+.workspaceSection,
+.tableCard[id] {
+  scroll-margin-top: 118px;
+}
+
 .processRail {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1022,6 +1072,18 @@ select {
 }
 
 @media (max-width: 760px) {
+  .shell {
+    padding: 0 16px;
+  }
+
+  .page {
+    padding: 18px 0 56px;
+  }
+
+  .topbar {
+    padding: 14px 0;
+  }
+
   .topbar__inner,
   .nav,
   .topbar__actions {
@@ -1040,27 +1102,231 @@ select {
 
   .nav {
     justify-content: flex-start;
+    width: 100%;
+    gap: 18px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 2px;
+  }
+
+  .nav a {
+    flex: 0 0 auto;
+  }
+
+  .brand {
+    gap: 12px;
+  }
+
+  .brand__mark {
+    width: 44px;
+    height: 44px;
+  }
+
+  .brand__title {
+    font-size: 1rem;
+  }
+
+  .brand__text {
+    font-size: 0.66rem;
   }
 
   .heroFrame__grid {
-    padding: 28px;
+    padding: 24px 18px;
+  }
+
+  .heroFrame__main h1 {
+    font-size: clamp(2.4rem, 14vw, 4rem);
+    letter-spacing: 0;
+  }
+
+  .heroActions,
+  .toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .button,
+  .toolbar input,
+  .toolbar select,
+  .inlineSelect {
+    width: 100%;
+    min-width: 0;
   }
 
   .workspaceHero {
     align-items: flex-start;
     flex-direction: column;
+    gap: 18px;
+    margin-bottom: 18px;
+    padding: 24px 18px;
+  }
+
+  .workspaceHero h1 {
+    max-width: 100%;
+    font-size: clamp(1.9rem, 10vw, 2.75rem);
+    letter-spacing: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .workspaceHero .button {
+    width: 100%;
+  }
+
+  .quickNav {
+    margin: -4px 0 18px;
+    padding-bottom: 8px;
+  }
+
+  .quickNav a {
+    min-height: 36px;
+    padding: 0 12px;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+  }
+
+  .dashboardStrip {
+    gap: 12px;
+    margin: 20px 0 24px;
+  }
+
+  .metricCard,
+  .panel,
+  .card,
+  .formCard,
+  .tableCard {
+    padding: 18px;
+    border-radius: 14px;
+  }
+
+  .metricCard b,
+  .metricCard--compact b {
+    font-size: 2rem;
   }
 
   .timePanel {
     align-items: stretch;
     flex-direction: column;
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  .sectionHead {
+    align-items: flex-start;
+    flex-direction: column;
+    margin: 28px 0 16px;
+  }
+
+  .sectionHead h2 {
+    max-width: 100%;
+    font-size: clamp(1.55rem, 8vw, 2.05rem);
+    letter-spacing: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .tabBar {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .tabButton {
+    width: 100%;
   }
 
   .miniTimeline {
     grid-template-columns: 1fr;
   }
 
+  .miniTimeline__step {
+    text-align: left;
+  }
+
   .formGrid {
     grid-template-columns: 1fr;
+  }
+
+  .item {
+    padding: 14px;
+  }
+
+  .item__head,
+  .subItem,
+  .teamProgress__head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .status {
+    align-self: flex-start;
+    max-width: 100%;
+  }
+
+  .list,
+  .item,
+  .meta,
+  .tableCard,
+  .formCard,
+  .managerTools {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 520px) {
+  .shell {
+    padding: 0 12px;
+  }
+
+  .topbar__inner,
+  .topbar__actions {
+    gap: 12px;
+  }
+
+  .brand__text {
+    display: none;
+  }
+
+  .eyebrow {
+    gap: 10px;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+  }
+
+  .eyebrow::before {
+    width: 32px;
+  }
+
+  .heroFrame,
+  .workspaceHero,
+  .metricCard,
+  .panel,
+  .card,
+  .formCard,
+  .tableCard,
+  .authShell {
+    border-radius: 12px;
+  }
+
+  .workspaceHero,
+  .heroFrame__grid,
+  .authShell {
+    padding: 18px;
+  }
+
+  .button {
+    min-height: 50px;
+    padding: 0 18px;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+  }
+
+  .field input,
+  .field textarea,
+  .field select,
+  .inlineSelect,
+  .timePanel input {
+    min-height: 48px;
+    padding: 12px 14px;
   }
 }
