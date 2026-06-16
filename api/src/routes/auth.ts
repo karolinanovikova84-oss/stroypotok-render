@@ -11,6 +11,26 @@ export const authRouter = Router();
 
 const selfRegistrationRoles = [UserRole.CLIENT, UserRole.WORKER] as const;
 
+function optionalProfileText(value: unknown) {
+  return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
+function parseExperienceYears(value: unknown) {
+  if (value === undefined || value === null || value === "") {
+    return {
+      ok: true,
+      value: null
+    };
+  }
+
+  const parsed = Number(value);
+
+  return {
+    ok: Number.isInteger(parsed) && parsed >= 0 && parsed <= 80,
+    value: parsed
+  };
+}
+
 function publicUser(user: {
   id: string;
   firstName: string;
@@ -18,6 +38,9 @@ function publicUser(user: {
   phone: string;
   email: string | null;
   role: UserRole;
+  specialization: string | null;
+  qualification: string | null;
+  experienceYears: number | null;
   isActive: boolean;
 }) {
   return {
@@ -27,6 +50,9 @@ function publicUser(user: {
     phone: user.phone,
     email: user.email,
     role: user.role,
+    specialization: user.specialization,
+    qualification: user.qualification,
+    experienceYears: user.experienceYears,
     isActive: user.isActive
   };
 }
@@ -70,7 +96,7 @@ authRouter.post("/login", async (req, res) => {
 });
 
 authRouter.post("/register", async (req, res) => {
-  const { firstName, lastName, phone, email, password, role } = req.body;
+  const { firstName, lastName, phone, email, password, role, specialization, qualification, experienceYears } = req.body;
 
   if (!firstName || typeof firstName !== "string") {
     return sendBadRequest(res, "firstName is required");
@@ -88,6 +114,11 @@ authRouter.post("/register", async (req, res) => {
   const normalizedPhone = phone.trim();
   const normalizedEmail =
     typeof email === "string" && email.trim() ? email.trim().toLowerCase() : null;
+  const parsedExperienceYears = parseExperienceYears(experienceYears);
+
+  if (!parsedExperienceYears.ok) {
+    return sendBadRequest(res, "experienceYears must be an integer from 0 to 80");
+  }
 
   const existingUser = await prisma.user.findFirst({
     where: {
@@ -128,6 +159,9 @@ authRouter.post("/register", async (req, res) => {
         phone: normalizedPhone,
         email: normalizedEmail,
         role: requestedRole,
+        specialization: requestedRole === UserRole.WORKER ? optionalProfileText(specialization) : null,
+        qualification: requestedRole === UserRole.WORKER ? optionalProfileText(qualification) : null,
+        experienceYears: requestedRole === UserRole.WORKER ? parsedExperienceYears.value : null,
         passwordHash: hashPassword(password)
       }
     });
@@ -164,6 +198,9 @@ authRouter.get("/me", requireAuth, async (req, res) => {
       phone: true,
       email: true,
       role: true,
+      specialization: true,
+      qualification: true,
+      experienceYears: true,
       isActive: true,
       clientRequests: {
         select: {

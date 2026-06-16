@@ -131,6 +131,20 @@ function fullName(user?: Pick<User, "firstName" | "lastName"> | null) {
   return `${user.firstName} ${user.lastName || ""}`.trim();
 }
 
+function workerProfileSummary(user?: Pick<User, "specialization" | "qualification" | "experienceYears"> | null) {
+  if (!user) {
+    return "профиль не заполнен";
+  }
+
+  const parts = [
+    user.specialization,
+    user.qualification,
+    typeof user.experienceYears === "number" ? `опыт ${user.experienceYears} лет` : null
+  ].filter(Boolean);
+
+  return parts.length > 0 ? parts.join(" · ") : "профиль не заполнен";
+}
+
 function formatDate(value?: string | null) {
   return value ? new Date(value).toLocaleString("ru-RU") : "не указано";
 }
@@ -282,7 +296,10 @@ export function CabinetShell() {
     phone: "",
     email: "",
     password: "",
-    role: "WORKER" as UserRole
+    role: "WORKER" as UserRole,
+    specialization: "",
+    qualification: "",
+    experienceYears: ""
   });
 
   const [shiftForm, setShiftForm] = useState({
@@ -569,7 +586,11 @@ export function CabinetShell() {
           {
             ...userForm,
             lastName: userForm.lastName || undefined,
-            email: userForm.email || undefined
+            email: userForm.email || undefined,
+            specialization: userForm.role === "WORKER" ? userForm.specialization || undefined : undefined,
+            qualification: userForm.role === "WORKER" ? userForm.qualification || undefined : undefined,
+            experienceYears:
+              userForm.role === "WORKER" && userForm.experienceYears ? Number(userForm.experienceYears) : ""
           },
           token!
         );
@@ -579,7 +600,10 @@ export function CabinetShell() {
           phone: "",
           email: "",
           password: "",
-          role: "WORKER"
+          role: "WORKER",
+          specialization: "",
+          qualification: "",
+          experienceYears: ""
         });
       },
       "Пользователь добавлен."
@@ -736,6 +760,7 @@ export function CabinetShell() {
           <p>
             {user.firstName} {user.lastName || ""} · {user.phone}
           </p>
+          {isWorker ? <p className="meta">{workerProfileSummary(user)}</p> : null}
         </div>
         <button className="button button--secondary" onClick={logout}>
           Выйти
@@ -854,6 +879,7 @@ export function CabinetShell() {
                     <span className="status">{absenceStatusLabels[absence.status]}</span>
                   </div>
                   <div className="meta">
+                    <div>Профиль: {workerProfileSummary(absence.worker)}</div>
                     <div>Объект: {absence.project?.title || "не указан"}</div>
                     <div>Период: {formatDate(absence.startsAt)} - {formatDate(absence.endsAt)}</div>
                     <div>Основание: {absence.reason || "без комментария"}</div>
@@ -934,6 +960,7 @@ export function CabinetShell() {
                     <span className="status">{payrollStatusLabels[row.payrollStatus]}</span>
                   </div>
                   <div className="meta">
+                    <div>Профиль: {workerProfileSummary(row.worker)}</div>
                     <div>Объект: {row.shift.project.title}</div>
                     <div>Работа: {row.shift.title}</div>
                     <div>График: {workScheduleLabels[row.shift.workSchedule]} · отработано {row.workedShifts}/{row.scheduledShifts} смен</div>
@@ -2065,6 +2092,7 @@ export function CabinetShell() {
                   </div>
                   <div className="meta">
                     <div>Рабочий: {fullName(assignment.worker)} · {assignment.worker?.phone}</div>
+                    <div>Профиль: {workerProfileSummary(assignment.worker)}</div>
                     <div>Объект: {shift.project?.title}</div>
                     <div>Начало: {formatDate(shift.startsAt)}</div>
                   </div>
@@ -2346,6 +2374,46 @@ export function CabinetShell() {
                   <option value="CLIENT">Клиент</option>
                 </select>
               </div>
+              {userForm.role === "WORKER" ? (
+                <>
+                  <div className="field">
+                    <label htmlFor="user-specialization">Специализация</label>
+                    <input
+                      id="user-specialization"
+                      value={userForm.specialization}
+                      onChange={(event) =>
+                        setUserForm((current) => ({ ...current, specialization: event.target.value }))
+                      }
+                      placeholder="Например: отделочные работы"
+                    />
+                  </div>
+                  <div className="field">
+                    <label htmlFor="user-qualification">Квалификация</label>
+                    <input
+                      id="user-qualification"
+                      value={userForm.qualification}
+                      onChange={(event) =>
+                        setUserForm((current) => ({ ...current, qualification: event.target.value }))
+                      }
+                      placeholder="Например: маляр-штукатур, 4 разряд"
+                    />
+                  </div>
+                  <div className="field">
+                    <label htmlFor="user-experience">Опыт работы, лет</label>
+                    <input
+                      id="user-experience"
+                      type="number"
+                      min="0"
+                      max="80"
+                      value={userForm.experienceYears}
+                      onChange={(event) =>
+                        setUserForm((current) => ({ ...current, experienceYears: event.target.value }))
+                      }
+                      placeholder="5"
+                    />
+                  </div>
+                </>
+              ) : null}
               <button className="button" disabled={busyKey === "create-user"}>
                 Создать пользователя
               </button>
@@ -2364,6 +2432,7 @@ export function CabinetShell() {
                   <div className="meta">
                     <div>Телефон: {row.phone}</div>
                     <div>Email: {row.email || "не указан"}</div>
+                    {row.role === "WORKER" ? <div>Профиль: {workerProfileSummary(row)}</div> : null}
                     <div>Активен: {row.isActive ? "да" : "нет"}</div>
                   </div>
                 </div>

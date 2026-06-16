@@ -22,6 +22,9 @@ async function upsertUser(data: {
   lastName: string;
   email: string;
   role: UserRole;
+  specialization?: string;
+  qualification?: string;
+  experienceYears?: number;
 }) {
   return prisma.user.upsert({
     where: {
@@ -32,6 +35,9 @@ async function upsertUser(data: {
       lastName: data.lastName,
       email: data.email,
       role: data.role,
+      specialization: data.role === UserRole.WORKER ? data.specialization || null : null,
+      qualification: data.role === UserRole.WORKER ? data.qualification || null : null,
+      experienceYears: data.role === UserRole.WORKER ? data.experienceYears ?? null : null,
       isActive: true
     },
     create: {
@@ -72,7 +78,10 @@ async function main() {
     firstName: "Илья",
     lastName: "Рабочий",
     email: "worker@construction.local",
-    role: UserRole.WORKER
+    role: UserRole.WORKER,
+    specialization: "Отделочные работы",
+    qualification: "Маляр-штукатур, 4 разряд",
+    experienceYears: 5
   });
 
   const client = await upsertUser({

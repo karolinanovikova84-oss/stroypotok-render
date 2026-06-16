@@ -99,7 +99,10 @@ const shiftInclude = {
           id: true,
           firstName: true,
           lastName: true,
-          phone: true
+          phone: true,
+          specialization: true,
+          qualification: true,
+          experienceYears: true
         }
       }
     }
@@ -136,6 +139,9 @@ shiftsRouter.get("/:id", async (req, res) => {
               firstName: true,
               lastName: true,
               phone: true,
+              specialization: true,
+              qualification: true,
+              experienceYears: true,
               role: true
             }
           }
@@ -511,6 +517,9 @@ shiftsRouter.post(
             firstName: true,
             lastName: true,
             phone: true,
+            specialization: true,
+            qualification: true,
+            experienceYears: true,
             role: true
           }
         },

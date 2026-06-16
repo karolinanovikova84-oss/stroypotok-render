@@ -15,6 +15,9 @@ export function AuthForm() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<Extract<UserRole, "CLIENT" | "WORKER">>("CLIENT");
+  const [specialization, setSpecialization] = useState("");
+  const [qualification, setQualification] = useState("");
+  const [experienceYears, setExperienceYears] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,7 +36,10 @@ export function AuthForm() {
               phone,
               email: email || undefined,
               password,
-              role
+              role,
+              specialization: role === "WORKER" ? specialization || undefined : undefined,
+              qualification: role === "WORKER" ? qualification || undefined : undefined,
+              experienceYears: role === "WORKER" && experienceYears ? Number(experienceYears) : ""
             });
 
       storeToken(result.token);
@@ -116,6 +122,43 @@ export function AuthForm() {
                 <option value="WORKER">Рабочий</option>
               </select>
             </div>
+
+            {role === "WORKER" ? (
+              <>
+                <div className="field">
+                  <label htmlFor="register-specialization">Специализация</label>
+                  <input
+                    id="register-specialization"
+                    value={specialization}
+                    onChange={(event) => setSpecialization(event.target.value)}
+                    placeholder="Например: отделочные работы"
+                  />
+                </div>
+
+                <div className="field">
+                  <label htmlFor="register-qualification">Квалификация</label>
+                  <input
+                    id="register-qualification"
+                    value={qualification}
+                    onChange={(event) => setQualification(event.target.value)}
+                    placeholder="Например: маляр-штукатур, 4 разряд"
+                  />
+                </div>
+
+                <div className="field">
+                  <label htmlFor="register-experience">Опыт работы, лет</label>
+                  <input
+                    id="register-experience"
+                    type="number"
+                    min="0"
+                    max="80"
+                    value={experienceYears}
+                    onChange={(event) => setExperienceYears(event.target.value)}
+                    placeholder="5"
+                  />
+                </div>
+              </>
+            ) : null}
           </>
         ) : null}
 

@@ -17,7 +17,10 @@ const absenceInclude = {
       id: true,
       firstName: true,
       lastName: true,
-      phone: true
+      phone: true,
+      specialization: true,
+      qualification: true,
+      experienceYears: true
     }
   },
   project: {

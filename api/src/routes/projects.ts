@@ -92,6 +92,9 @@ const projectInclude = {
               firstName: true,
               lastName: true,
               phone: true,
+              specialization: true,
+              qualification: true,
+              experienceYears: true,
               role: true
             }
           }

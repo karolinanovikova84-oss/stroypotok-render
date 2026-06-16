@@ -34,6 +34,9 @@ export type User = {
   phone: string;
   email: string | null;
   role: UserRole;
+  specialization: string | null;
+  qualification: string | null;
+  experienceYears: number | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -169,11 +172,14 @@ export type Shift = {
       firstName: string;
       lastName: string | null;
       phone: string;
+      specialization: string | null;
+      qualification: string | null;
+      experienceYears: number | null;
     };
   }>;
 };
 
-export type AuthUser = Pick<User, "id" | "firstName" | "lastName" | "phone" | "email" | "role" | "isActive">;
+export type AuthUser = Pick<User, "id" | "firstName" | "lastName" | "phone" | "email" | "role" | "specialization" | "qualification" | "experienceYears" | "isActive">;
 
 export type CurrentUser = AuthUser & {
   clientRequests?: Array<Pick<ClientRequest, "id" | "title" | "address" | "status" | "priority" | "createdAt" | "desiredStartDate" | "desiredEndDate">>;
@@ -230,7 +236,7 @@ export type AbsenceRequest = {
   managerNote: string | null;
   createdAt: string;
   reviewedAt: string | null;
-  worker?: Pick<User, "id" | "firstName" | "lastName" | "phone">;
+  worker?: Pick<User, "id" | "firstName" | "lastName" | "phone" | "specialization" | "qualification" | "experienceYears">;
   project?: Pick<Project, "id" | "title" | "address" | "managerId" | "workflowStatus">;
   assignment?: {
     id: string;
@@ -251,7 +257,7 @@ export type PayrollRow = {
   accruedAmount: number;
   paidAmount: string;
   payrollDeductions: PayrollDeduction[];
-  worker: Pick<User, "id" | "firstName" | "lastName" | "phone">;
+  worker: Pick<User, "id" | "firstName" | "lastName" | "phone" | "specialization" | "qualification" | "experienceYears">;
   shift: Shift & {
     project: Pick<Project, "id" | "title" | "address" | "status" | "workflowStatus">;
   };
@@ -340,6 +346,9 @@ export function register(payload: {
   email?: string;
   password: string;
   role: "CLIENT" | "WORKER";
+  specialization?: string;
+  qualification?: string;
+  experienceYears?: number | "";
 }) {
   return apiRequest<AuthResponse>("/api/auth/register", {
     method: "POST",
@@ -693,6 +702,9 @@ export function createUser(payload: {
   email?: string;
   role: UserRole;
   password: string;
+  specialization?: string;
+  qualification?: string;
+  experienceYears?: number | "";
   isActive?: boolean;
 }, token: string) {
   return apiRequest<User>("/api/users", {

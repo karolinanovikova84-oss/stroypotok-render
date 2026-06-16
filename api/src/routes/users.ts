@@ -10,6 +10,26 @@ export const usersRouter = Router();
 
 usersRouter.use(requireAuth);
 
+function optionalProfileText(value: unknown) {
+  return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
+function parseExperienceYears(value: unknown) {
+  if (value === undefined || value === null || value === "") {
+    return {
+      ok: true,
+      value: null
+    };
+  }
+
+  const parsed = Number(value);
+
+  return {
+    ok: Number.isInteger(parsed) && parsed >= 0 && parsed <= 80,
+    value: parsed
+  };
+}
+
 usersRouter.get("/", requireRoles([UserRole.ADMIN, UserRole.COORDINATOR, UserRole.MANAGER]), async (req, res) => {
   const role = typeof req.query.role === "string" ? req.query.role : undefined;
 
@@ -31,6 +51,9 @@ usersRouter.get("/", requireRoles([UserRole.ADMIN, UserRole.COORDINATOR, UserRol
       phone: true,
       email: true,
       role: true,
+      specialization: true,
+      qualification: true,
+      experienceYears: true,
       isActive: true,
       createdAt: true,
       updatedAt: true,
@@ -65,6 +88,9 @@ usersRouter.get("/:id", async (req, res) => {
       phone: true,
       email: true,
       role: true,
+      specialization: true,
+      qualification: true,
+      experienceYears: true,
       isActive: true,
       createdAt: true,
       updatedAt: true,
@@ -128,6 +154,9 @@ usersRouter.post("/", requireRoles([UserRole.ADMIN]), async (req, res) => {
     email,
     role,
     password,
+    specialization,
+    qualification,
+    experienceYears,
     isActive
   } = req.body;
 
@@ -154,6 +183,11 @@ usersRouter.post("/", requireRoles([UserRole.ADMIN]), async (req, res) => {
   const normalizedPhone = phone.trim();
   const normalizedEmail =
     typeof email === "string" && email.trim() ? email.trim().toLowerCase() : null;
+  const parsedExperienceYears = parseExperienceYears(experienceYears);
+
+  if (!parsedExperienceYears.ok) {
+    return sendBadRequest(res, "experienceYears must be an integer from 0 to 80");
+  }
 
   const duplicateUser = await prisma.user.findFirst({
     where: {
@@ -192,6 +226,9 @@ usersRouter.post("/", requireRoles([UserRole.ADMIN]), async (req, res) => {
         phone: normalizedPhone,
         email: normalizedEmail,
         role,
+        specialization: role === UserRole.WORKER ? optionalProfileText(specialization) : null,
+        qualification: role === UserRole.WORKER ? optionalProfileText(qualification) : null,
+        experienceYears: role === UserRole.WORKER ? parsedExperienceYears.value : null,
         isActive: typeof isActive === "boolean" ? isActive : true,
         passwordHash: hashPassword(password)
       },
@@ -202,6 +239,9 @@ usersRouter.post("/", requireRoles([UserRole.ADMIN]), async (req, res) => {
         phone: true,
         email: true,
         role: true,
+        specialization: true,
+        qualification: true,
+        experienceYears: true,
         isActive: true,
         createdAt: true,
         updatedAt: true
@@ -222,7 +262,7 @@ usersRouter.post("/", requireRoles([UserRole.ADMIN]), async (req, res) => {
 
 usersRouter.patch("/:id", requireRoles([UserRole.ADMIN]), async (req, res) => {
   const userId = String(req.params.id);
-  const { firstName, lastName, phone, email, role, password, isActive } = req.body;
+  const { firstName, lastName, phone, email, role, password, specialization, qualification, experienceYears, isActive } = req.body;
 
   if (role && !Object.values(UserRole).includes(role)) {
     return sendBadRequest(res, "invalid role");
@@ -243,6 +283,14 @@ usersRouter.patch("/:id", requireRoles([UserRole.ADMIN]), async (req, res) => {
   const normalizedPhone = typeof phone === "string" ? phone.trim() : undefined;
   const normalizedEmail =
     typeof email === "string" && email.trim() ? email.trim().toLowerCase() : undefined;
+  const parsedExperienceYears = parseExperienceYears(experienceYears);
+
+  if (!parsedExperienceYears.ok) {
+    return sendBadRequest(res, "experienceYears must be an integer from 0 to 80");
+  }
+
+  const nextRole = role || existingUser.role;
+  const isWorker = nextRole === UserRole.WORKER;
 
   if (normalizedPhone || normalizedEmail) {
     const duplicateUser = await prisma.user.findFirst({
@@ -293,6 +341,9 @@ usersRouter.patch("/:id", requireRoles([UserRole.ADMIN]), async (req, res) => {
         phone: normalizedPhone,
         email: typeof email === "string" ? normalizedEmail || null : undefined,
         role: role || undefined,
+        specialization: isWorker ? (typeof specialization === "string" ? optionalProfileText(specialization) : undefined) : null,
+        qualification: isWorker ? (typeof qualification === "string" ? optionalProfileText(qualification) : undefined) : null,
+        experienceYears: isWorker ? (experienceYears !== undefined ? parsedExperienceYears.value : undefined) : null,
         isActive: typeof isActive === "boolean" ? isActive : undefined,
         passwordHash:
           typeof password === "string" && password.length >= 6 ? hashPassword(password) : undefined
@@ -304,6 +355,9 @@ usersRouter.patch("/:id", requireRoles([UserRole.ADMIN]), async (req, res) => {
         phone: true,
         email: true,
         role: true,
+        specialization: true,
+        qualification: true,
+        experienceYears: true,
         isActive: true,
         createdAt: true,
         updatedAt: true
