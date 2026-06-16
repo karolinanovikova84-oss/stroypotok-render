@@ -437,6 +437,15 @@ export function CabinetShell() {
     () => projects.filter((project) => project.workflowStatus === "PLAN_SUBMITTED"),
     [projects]
   );
+  const resourceRequests = useMemo(
+    () =>
+      projects.flatMap((project) =>
+        (project.resources || [])
+          .filter((resource) => ["NEEDED", "ORDERED", "RESERVED"].includes(resource.status))
+          .map((resource) => ({ project, resource }))
+      ),
+    [projects]
+  );
   const workerStats = useMemo(() => {
     const assignments = user?.assignments || [];
     const ownPayroll = payrollRows.filter((row) => row.worker.id === user?.id);
@@ -734,6 +743,7 @@ export function CabinetShell() {
     ...((isAdmin || isCoordinator || isManager) ? [{ href: "#demo-time", label: "Демо-время" }] : []),
     ...((isClient || isAdmin) ? [{ href: "#requests", label: isClient ? "Мои заявки" : "Заявки" }] : []),
     ...((isAdmin || isCoordinator) ? [{ href: "#coordinator", label: "Координатор" }] : []),
+    ...((isAdmin || isCoordinator) ? [{ href: "#coordinator-resources", label: "Ресурсы" }] : []),
     ...((isAdmin || isManager)
       ? [
           { href: "#manager-shifts", label: "Смены" },
@@ -1397,6 +1407,91 @@ export function CabinetShell() {
                   </div>
                 ))}
                 {pendingRequests.length === 0 ? <div className="item">Нет заявок, ожидающих обработки.</div> : null}
+              </div>
+
+              <div id="coordinator-resources" className="sectionHead">
+                <div>
+                  <h2>Запросы ресурсов</h2>
+                </div>
+              </div>
+
+              <div className="list">
+                {resourceRequests.map(({ project, resource }) => (
+                  <div className="item" key={resource.id}>
+                    <div className="item__head">
+                      <h4>{resource.title}</h4>
+                      <span className="status">{resourceStatusLabels[resource.status]}</span>
+                    </div>
+                    <div className="meta">
+                      <div>Объект: {project.title}</div>
+                      <div>Прораб: {fullName(project.manager)}</div>
+                      <div>Количество: {resource.quantity} {resource.unit} · категория: {resource.category}</div>
+                      <div>Срок: {formatDate(resource.dueDate)}</div>
+                      <div>Комментарий: {resource.notes || "нет"}</div>
+                    </div>
+                    <div className="toolbar">
+                      {resource.status === "NEEDED" ? (
+                        <button
+                          className="button"
+                          disabled={busyKey === `coordinator-resource-${resource.id}-ordered`}
+                          onClick={() =>
+                            runAction(
+                              `coordinator-resource-${resource.id}-ordered`,
+                              () => updateResource({ id: resource.id, status: "ORDERED", token }).then(() => undefined),
+                              "Ресурс принят в работу."
+                            )
+                          }
+                        >
+                          Заказать
+                        </button>
+                      ) : null}
+                      {resource.status === "ORDERED" ? (
+                        <button
+                          className="button"
+                          disabled={busyKey === `coordinator-resource-${resource.id}-reserved`}
+                          onClick={() =>
+                            runAction(
+                              `coordinator-resource-${resource.id}-reserved`,
+                              () => updateResource({ id: resource.id, status: "RESERVED", token }).then(() => undefined),
+                              "Ресурс зарезервирован."
+                            )
+                          }
+                        >
+                          Зарезервировать
+                        </button>
+                      ) : null}
+                      {resource.status === "RESERVED" ? (
+                        <button
+                          className="button"
+                          disabled={busyKey === `coordinator-resource-${resource.id}-delivered`}
+                          onClick={() =>
+                            runAction(
+                              `coordinator-resource-${resource.id}-delivered`,
+                              () => updateResource({ id: resource.id, status: "DELIVERED", token }).then(() => undefined),
+                              "Ресурс отмечен как доставленный."
+                            )
+                          }
+                        >
+                          Доставлено
+                        </button>
+                      ) : null}
+                      <button
+                        className="button button--secondary"
+                        disabled={busyKey === `coordinator-resource-${resource.id}-cancelled`}
+                        onClick={() =>
+                          runAction(
+                            `coordinator-resource-${resource.id}-cancelled`,
+                            () => updateResource({ id: resource.id, status: "CANCELLED", token }).then(() => undefined),
+                            "Запрос ресурса отменен."
+                          )
+                        }
+                      >
+                        Отменить
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                {resourceRequests.length === 0 ? <div className="item">Нет ресурсных запросов в работе.</div> : null}
               </div>
 
               <div className="sectionHead">

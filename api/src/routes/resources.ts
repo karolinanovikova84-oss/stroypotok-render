@@ -135,7 +135,7 @@ resourcesRouter.post(
 
 resourcesRouter.patch(
   "/:id",
-  requireRoles([UserRole.ADMIN, UserRole.MANAGER]),
+  requireRoles([UserRole.ADMIN, UserRole.COORDINATOR, UserRole.MANAGER]),
   async (req, res) => {
     const resourceId = String(req.params.id);
     const current = await prisma.resourceNeed.findUnique({
@@ -199,7 +199,17 @@ resourcesRouter.patch(
           id: current.projectId
         },
         data: {
-          resourcesReadyAt: new Date()
+          resourcesReadyAt: new Date(),
+          workStage: "Ресурсы готовы к началу работ"
+        }
+      });
+    } else if (req.auth!.role === UserRole.COORDINATOR && status) {
+      await prisma.project.update({
+        where: {
+          id: current.projectId
+        },
+        data: {
+          workStage: "Координатор обрабатывает ресурсный запрос"
         }
       });
     }
