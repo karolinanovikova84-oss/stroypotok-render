@@ -326,6 +326,7 @@ export function CabinetShell() {
     quantity: 1,
     unit: "шт.",
     estimatedCost: "",
+    dueDate: "",
     notes: ""
   });
 
@@ -710,6 +711,7 @@ export function CabinetShell() {
           title: "",
           quantity: 1,
           estimatedCost: "",
+          dueDate: "",
           notes: ""
         }));
       },
@@ -1438,29 +1440,14 @@ export function CabinetShell() {
                             runAction(
                               `coordinator-resource-${resource.id}-ordered`,
                               () => updateResource({ id: resource.id, status: "ORDERED", token }).then(() => undefined),
-                              "Ресурс принят в работу."
+                              "Ресурс отмечен как заказанный."
                             )
                           }
                         >
-                          Заказать
+                          Заказано
                         </button>
                       ) : null}
-                      {resource.status === "ORDERED" ? (
-                        <button
-                          className="button"
-                          disabled={busyKey === `coordinator-resource-${resource.id}-reserved`}
-                          onClick={() =>
-                            runAction(
-                              `coordinator-resource-${resource.id}-reserved`,
-                              () => updateResource({ id: resource.id, status: "RESERVED", token }).then(() => undefined),
-                              "Ресурс зарезервирован."
-                            )
-                          }
-                        >
-                          Зарезервировать
-                        </button>
-                      ) : null}
-                      {resource.status === "RESERVED" ? (
+                      {["ORDERED", "RESERVED"].includes(resource.status) ? (
                         <button
                           className="button"
                           disabled={busyKey === `coordinator-resource-${resource.id}-delivered`}
@@ -2159,6 +2146,16 @@ export function CabinetShell() {
                     id="resource-unit"
                     value={resourceForm.unit}
                     onChange={(event) => setResourceForm((current) => ({ ...current, unit: event.target.value }))}
+                  />
+                </div>
+                <div className="field">
+                  <label htmlFor="resource-due-date">Срок</label>
+                  <input
+                    id="resource-due-date"
+                    type="date"
+                    value={resourceForm.dueDate}
+                    onChange={(event) => setResourceForm((current) => ({ ...current, dueDate: event.target.value }))}
+                    required
                   />
                 </div>
               </div>
