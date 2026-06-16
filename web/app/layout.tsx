@@ -18,7 +18,7 @@ const bodyFont = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Construction Flow",
+  title: "СтройПоток",
   description: "Система управления заявками, объектами, ресурсами и рабочими сменами строительной компании"
 };
 
@@ -38,7 +38,7 @@ export default function RootLayout({
             <Link href="/" className="brand">
               <span className="brand__mark" />
               <span>
-                <div className="brand__title">Construction Flow</div>
+                <div className="brand__title">СтройПоток</div>
                 <div className="brand__text">операционная система стройки</div>
               </span>
             </Link>

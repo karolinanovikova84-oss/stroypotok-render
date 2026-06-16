@@ -5,7 +5,7 @@ export default function HomePage() {
     <>
       <section className="workspaceHero workspaceHero--home">
         <div>
-          <span className="eyebrow">Construction Flow</span>
+          <span className="eyebrow">СтройПоток</span>
           <h1>Система управления строительным процессом</h1>
           <p>
             Платформа принимает заявку клиента, превращает ее в объект, назначает прораба,
